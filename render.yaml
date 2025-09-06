@@ -1,0 +1,23 @@
+# Render: static site for frontend and Docker web service for backend
+services:
+  - type: static
+    name: engagement-intel-frontend
+    env: node
+    repo: https://github.com/piyushkeshri8912/Engagement_Intelligence-1
+    branch: main
+    buildCommand: cd frontend && npm ci && npm run build
+    publishPath: frontend/build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://engagement-intel-backend.onrender.com
+
+  - type: web
+    name: engagement-intel-backend
+    env: docker
+    repo: https://github.com/piyushkeshri8912/Engagement_Intelligence-1
+    branch: main
+    path: backend
+    plan: free
+    envVars:
+      - key: NODE_ENV
+        value: production
