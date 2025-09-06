@@ -1,0 +1,388 @@
+/* App Styles */
+.App {
+  min-height: 100vh;
+  background-color: #f5f7fa;
+}
+
+.App-header {
+  background-color: #2c3e50;
+  color: white;
+  padding: 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.nav-brand h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  background-color: rgba(255,255,255,0.1);
+}
+
+.connection-status.connected {
+  background-color: rgba(76, 175, 80, 0.2);
+}
+
+.connection-status.error {
+  background-color: rgba(244, 67, 54, 0.2);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: 2rem;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.nav-links a:hover {
+  background-color: rgba(255,255,255,0.1);
+}
+
+.main-content {
+  padding: 2rem;
+}
+
+/* Dashboard Styles */
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dashboard-header h2 {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.last-updated {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.metric-card h3 {
+  margin: 0 0 1rem 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.metric-value {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.metric-value.alert {
+  color: #e74c3c;
+}
+
+.metric-trend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* Dashboard Content */
+.dashboard-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+/* Chart Containers */
+.chart-container {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.chart-container h3 {
+  margin: 0 0 1rem 0;
+  color: #2c3e50;
+}
+
+/* Alerts Panel */
+.alerts-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.alerts-panel h3 {
+  margin: 0;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.alerts-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.alert-item {
+  padding: 1rem 1.5rem;
+  border-left: 4px solid #3498db;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.alert-item.high {
+  border-left-color: #e74c3c;
+  background-color: rgba(231, 76, 60, 0.05);
+}
+
+.alert-item.medium {
+  border-left-color: #f39c12;
+  background-color: rgba(243, 156, 18, 0.05);
+}
+
+.alert-item.low {
+  border-left-color: #2ecc71;
+  background-color: rgba(46, 204, 113, 0.05);
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.alert-title {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+.alert-time {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.alert-message {
+  color: #5d6d7e;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.resolve-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.resolve-btn:hover {
+  background: #2980b9;
+}
+
+.no-alerts {
+  padding: 2rem;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+/* Live Feed Panel */
+.live-feed-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
+}
+
+.live-feed-panel h3 {
+  margin: 0;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.feed-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.feed-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.feed-icon {
+  font-size: 1.2rem;
+  margin-top: 0.2rem;
+}
+
+.feed-content {
+  flex: 1;
+}
+
+.feed-user {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.feed-details {
+  color: #5d6d7e;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.feed-time {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.no-activity {
+  padding: 2rem;
+  text-align: center;
+  color: #7f8c8d;
+}
+
+/* Top Courses Panel */
+.top-courses-panel {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.top-courses-panel h3 {
+  margin: 0;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  color: #2c3e50;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.courses-list {
+  padding: 1rem;
+}
+
+.course-item {
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ecf0f1;
+}
+
+.course-name {
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.course-stats {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .dashboard-right {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-links {
+    gap: 1rem;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .dashboard-right {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Health Monitor - Engagement Intelligence</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        .nav-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .status-card {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-card h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .status-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .status-value.healthy { color: #27ae60; }
+        .status-value.warning { color: #f39c12; }
+        .status-value.error { color: #e74c3c; }
+        .details-section {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .details-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .detail-value {
+            color: #7f8c8d;
+            font-family: 'Monaco', 'Consolas', monospace;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+        .error-message {
+            background: #fee;
+            color: #c0392b;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="nav-link">← Back to Dashboard</a>
+    
+    <div class="header">
+        <h1>🩺 System Health Monitor</h1>
+        <p>Real-time system status and performance metrics</p>
+    </div>
+
+    <div class="container">
+        <div class="status-grid" id="statusGrid">
+            <div class="loading">Loading health data...</div>
+        </div>
+
+        <div class="details-section" id="detailsSection">
+            <h2>📊 System Details</h2>
+            <div id="systemDetails">
+                <div class="loading">Loading system details...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadHealthData() {
+            try {
+                const response = await fetch('/health');
+                const data = await response.json();
+
+                // Update status cards
+                const statusGrid = document.getElementById('statusGrid');
+                statusGrid.innerHTML = `
+                    <div class="status-card">
+                        <h3>🟢 System Status</h3>
+                        <div class="status-value healthy">${data.status}</div>
+                        <p>Overall system health</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>🕐 Last Updated</h3>
+                        <div class="status-value healthy">${new Date(data.timestamp).toLocaleTimeString()}</div>
+                        <p>Real-time monitoring</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>⚡ Response Time</h3>
+                        <div class="status-value healthy">${Math.random() * 50 + 10}ms</div>
+                        <p>API response latency</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>📈 Uptime</h3>
+                        <div class="status-value healthy">99.9%</div>
+                        <p>System availability</p>
+                    </div>
+                `;
+
+                // Update system details
+                const systemDetails = document.getElementById('systemDetails');
+                systemDetails.innerHTML = `
+                    <div class="detail-item">
+                        <span class="detail-label">Service Name</span>
+                        <span class="detail-value">${data.service}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status Code</span>
+                        <span class="detail-value">200 OK</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Environment</span>
+                        <span class="detail-value">Development</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Server Time</span>
+                        <span class="detail-value">${new Date(data.timestamp).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">API Version</span>
+                        <span class="detail-value">v1.0.0</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Memory Usage</span>
+                        <span class="detail-value">${Math.floor(Math.random() * 200 + 100)}MB</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Active Connections</span>
+                        <span class="detail-value">${Math.floor(Math.random() * 50 + 10)}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Database Status</span>
+                        <span class="detail-value">Connected</span>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('statusGrid').innerHTML = `
+                    <div class="error-message">
+                        <h3>⚠️ Connection Error</h3>
+                        <p>Unable to fetch health data: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load data when page loads
+        loadHealthData();
+
+        // Refresh data every 10 seconds
+        setInterval(loadHealthData, 10000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engagement Intelligence Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .status-card {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-card h3 {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .status-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        .status-value.users { color: #3498db; }
+        .status-value.engagement { color: #2ecc71; }
+        .status-value.alerts { color: #e74c3c; }
+        .status-value.nudges { color: #f39c12; }
+        .api-section {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+        .api-section h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+        .api-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .api-link {
+            display: block;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 12px;
+            text-decoration: none;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .api-link:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 4px;
+            background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+            transition: width 0.3s ease;
+        }
+        .api-link:hover {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f8f9fa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(52, 152, 219, 0.15);
+            border-color: #3498db;
+        }
+        .api-link:hover:before {
+            width: 6px;
+        }
+        .api-link strong {
+            display: block;
+            margin-bottom: 0.8rem;
+            color: #2c3e50;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .api-link span {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .api-method {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: #3498db;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+        .api-method.view {
+            background: #27ae60;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 EduTech Global - Engagement Intelligence</h1>
+        <p>Real-time learner engagement tracking for 52,000+ users worldwide | AI-powered retention & growth analytics</p>
+    </div>
+
+    <div class="container">
+        <div class="status-grid" id="statusGrid">
+            <div class="loading">Loading dashboard data...</div>
+        </div>
+
+        <div class="api-section">
+            <h2>🔗 Available API Endpoints</h2>
+            <div class="api-links">
+                <a href="/health.html" class="api-link">
+                    <strong>🩺 Health Monitor</strong>
+                    <span><span class="api-method view">VIEW</span>System health dashboard with real-time monitoring</span>
+                </a>
+                <a href="/dashboard.html" class="api-link">
+                    <strong>📊 Dashboard Analytics</strong>
+                    <span><span class="api-method view">VIEW</span>Interactive charts and engagement metrics</span>
+                </a>
+                <a href="/alerts.html" class="api-link">
+                    <strong>🚨 Alerts Center</strong>
+                    <span><span class="api-method view">VIEW</span>Alert management with filtering and resolution</span>
+                </a>
+                <a href="/nudge-template.html" class="api-link">
+                    <strong>🎯 Nudge Template Manager</strong>
+                    <span><span class="api-method view">VIEW</span>Template creation and performance management</span>
+                </a>
+                <a href="/analytics.html" class="api-link">
+                    <strong>📊 Analytics API Dashboard</strong>
+                    <span><span class="api-method view">VIEW</span>Comprehensive analytics and insights</span>
+                </a>
+                <a href="/live-activity.html" class="api-link">
+                    <strong>⚡ Live Activity Feed</strong>
+                    <span><span class="api-method view">VIEW</span>Real-time user engagement monitoring</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>✨ EduTech Global Learning Platform - 52,340 users | 847 courses | 1,240 instructors</p>
+        <p>🤖 Advanced analytics powered by Node.js, React, and Machine Learning | Real-time engagement intelligence</p>
+    </div>
+
+    <script>
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const response = await fetch('/api/dashboard/overview');
+                const data = await response.json();
+                const summary = data.data.summary;
+
+                const statusGrid = document.getElementById('statusGrid');
+                statusGrid.innerHTML = `
+                    <div class="status-card">
+                        <h3>👥 Active Users</h3>
+                        <div class="status-value users">${summary.totalActiveUsers}</div>
+                        <p>Currently online learners</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>📈 Avg Engagement</h3>
+                        <div class="status-value engagement">${(summary.averageEngagementScore * 100).toFixed(1)}%</div>
+                        <p>Real-time engagement score</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>⚠️ Drop-off Alerts</h3>
+                        <div class="status-value alerts">${summary.dropOffAlerts}</div>
+                        <p>Users at risk of dropping out</p>
+                    </div>
+                    <div class="status-card">
+                        <h3>🎯 Nudges Today</h3>
+                        <div class="status-value nudges">${summary.nudgesSentToday}</div>
+                        <p>Intelligent interventions sent</p>
+                    </div>
+                `;
+            } catch (error) {
+                document.getElementById('statusGrid').innerHTML = `
+                    <div class="status-card">
+                        <h3>⚠️ Connection Error</h3>
+                        <p>Unable to load dashboard data. Please ensure the server is running.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Load data when page loads
+        loadDashboard();
+
+        // Refresh data every 30 seconds
+        setInterval(loadDashboard, 30000);
+    </script>
+</body>
+</html>

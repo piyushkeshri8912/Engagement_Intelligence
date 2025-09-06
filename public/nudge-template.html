@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nudge Template Manager - ERI Intelligence</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            color: white;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #4a5568;
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            color: #718096;
+            margin-bottom: 5px;
+        }
+
+        .stat-change {
+            font-size: 0.9em;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .positive { background: #c6f6d5; color: #22543d; }
+        .negative { background: #fed7d7; color: #742a2a; }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .content-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+
+        .template-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .template-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+        }
+
+        .template-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .template-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .template-type {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .template-preview {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+            color: #4a5568;
+        }
+
+        .template-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #718096;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .activity-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 0.85em;
+            color: #718096;
+        }
+
+        .chart-container {
+            grid-column: span 2;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Nudge Template Manager</h1>
+        <p>Create, manage, and optimize engagement templates</p>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-btn">← Back to Main Dashboard</a>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-icon">📝</span>
+                <div class="stat-number">24</div>
+                <div class="stat-label">Active Templates</div>
+                <span class="stat-change positive">+3 this week</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">📊</span>
+                <div class="stat-number">78.5%</div>
+                <div class="stat-label">Avg. Open Rate</div>
+                <span class="stat-change positive">+5.2%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🎯</span>
+                <div class="stat-number">45.2%</div>
+                <div class="stat-label">Click Rate</div>
+                <span class="stat-change negative">-2.1%</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⚡</span>
+                <div class="stat-number">1,247</div>
+                <div class="stat-label">Templates Sent Today</div>
+                <span class="stat-change positive">+12%</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="content-section">
+                <h2 class="section-title">🔥 Top Performing Templates</h2>
+                <div class="template-grid">
+                    <div class="template-card">
+                        <div class="template-header">
+                            <span class="template-name">Welcome Back!</span>
+                            <span class="template-type">Email</span>
+                        </div>
+                        <div class="template-preview">
+                            "Hey {name}! We missed you. Check out what's new in your courses..."
+                        </div>
+                        <div class="template-stats">
+                            <span>📈 92% Open Rate</span>
+                            <span>🎯 67% Click Rate</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">Edit</button>
+                            <button class="btn btn-secondary">Clone</button>
+                        </div>
+                    </div>
+
+                    <div class="template-card">
+                        <div class="template-header">
+                            <span class="template-name">Course Reminder</span>
+                            <span class="template-type">Push</span>
+                        </div>
+                        <div class="template-preview">
+                            "🚀 Don't forget to continue your {course_name} journey!"
+                        </div>
+                        <div class="template-stats">
+                            <span>📈 85% Open Rate</span>
+                            <span>🎯 52% Click Rate</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">Edit</button>
+                            <button class="btn btn-secondary">Clone</button>
+                        </div>
+                    </div>
+
+                    <div class="template-card">
+                        <div class="template-header">
+                            <span class="template-name">Achievement Unlock</span>
+                            <span class="template-type">In-App</span>
+                        </div>
+                        <div class="template-preview">
+                            "🏆 Congratulations! You've unlocked the {achievement_name} badge!"
+                        </div>
+                        <div class="template-stats">
+                            <span>📈 96% View Rate</span>
+                            <span>🎯 89% Action Rate</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">Edit</button>
+                            <button class="btn btn-secondary">Clone</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <h2 class="section-title">⏰ Recent Template Activity</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-content">
+                            <div class="activity-title">New template "Study Streak" created</div>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📊</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Template "Welcome Back!" sent to 245 users</div>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">✏️</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Template "Course Reminder" updated</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-content">
+                            <div class="activity-title">A/B test completed for "Motivation Monday"</div>
+                            <div class="activity-time">3 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📈</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Template performance report generated</div>
+                            <div class="activity-time">5 hours ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🔧</div>
+                        <div class="activity-content">
+                            <div class="activity-title">Template "Weekend Learning" deactivated</div>
+                            <div class="activity-time">1 day ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="section-title">📈 Template Performance Over Time</h2>
+            <canvas id="templateChart"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let templateChart;
+        
+        // Load live template data
+        async function loadTemplateData() {
+            try {
+                const response = await fetch('/api/nudges/templates/stats');
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateDashboard(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading template data:', error);
+                // Fall back to demo data
+                showDemoData();
+            }
+        }
+        
+        function updateDashboard(data) {
+            // Update statistics cards
+            document.querySelector('.stat-card:nth-child(1) .stat-number').textContent = data.activeTemplates;
+            document.querySelector('.stat-card:nth-child(2) .stat-number').textContent = (data.avgOpenRate * 100).toFixed(1) + '%';
+            document.querySelector('.stat-card:nth-child(3) .stat-number').textContent = (data.avgClickRate * 100).toFixed(1) + '%';
+            document.querySelector('.stat-card:nth-child(4) .stat-number').textContent = data.templatesSentToday.toLocaleString();
+            
+            // Update trend indicators
+            updateTrendIndicator('.stat-card:nth-child(2)', data.performance.openRate.change, data.performance.openRate.trend);
+            updateTrendIndicator('.stat-card:nth-child(3)', data.performance.clickRate.change, data.performance.clickRate.trend);
+            
+            // Update top performing templates
+            updateTopTemplates(data.topPerforming);
+            
+            // Update recent activity
+            updateRecentActivity(data.recentActivity);
+            
+            // Update chart
+            updateTemplateChart(data.trends);
+        }
+        
+        function updateTrendIndicator(selector, change, trend) {
+            const element = document.querySelector(selector + ' .stat-change');
+            if (element) {
+                element.textContent = (change > 0 ? '+' : '') + change.toFixed(1) + (selector.includes('2') || selector.includes('3') ? '%' : '');
+                element.className = 'stat-change ' + (trend === 'up' ? 'positive' : trend === 'down' ? 'negative' : 'neutral');
+            }
+        }
+        
+        function updateTopTemplates(templates) {
+            const container = document.querySelector('.template-grid');
+            container.innerHTML = templates.map(template => `
+                <div class="template-card">
+                    <div class="template-header">
+                        <span class="template-name">${template.name}</span>
+                        <span class="template-type">${template.type}</span>
+                    </div>
+                    <div class="template-preview">
+                        "${template.preview}"
+                    </div>
+                    <div class="template-stats">
+                        <span>📈 ${(template.openRate * 100).toFixed(0)}% Open Rate</span>
+                        <span>🎯 ${(template.clickRate * 100).toFixed(0)}% Click Rate</span>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary">Edit</button>
+                        <button class="btn btn-secondary">Clone</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Re-attach button listeners
+            attachButtonListeners();
+        }
+        
+        function updateRecentActivity(activities) {
+            const container = document.querySelector('.activity-list');
+            container.innerHTML = activities.map(activity => {
+                const timeAgo = getTimeAgo(activity.timestamp);
+                let icon = '📝';
+                switch(activity.type) {
+                    case 'template_sent': icon = '📊'; break;
+                    case 'template_updated': icon = '✏️'; break;
+                    case 'ab_test_completed': icon = '🎯'; break;
+                }
+                
+                return `
+                    <div class="activity-item">
+                        <div class="activity-icon">${icon}</div>
+                        <div class="activity-content">
+                            <div class="activity-title">${getActivityTitle(activity)}</div>
+                            <div class="activity-time">${timeAgo}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function getActivityTitle(activity) {
+            switch(activity.type) {
+                case 'template_created': return `New template "${activity.templateName}" created`;
+                case 'template_sent': return `Template "${activity.templateName}" sent to ${activity.recipients} users`;
+                case 'template_updated': return `Template "${activity.templateName}" updated`;
+                default: return 'Template activity occurred';
+            }
+        }
+        
+        function getTimeAgo(timestamp) {
+            const diff = Date.now() - timestamp;
+            const minutes = Math.floor(diff / (1000 * 60));
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+            if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+            return 'Just now';
+        }
+        
+        function updateTemplateChart(trends) {
+            const ctx = document.getElementById('templateChart').getContext('2d');
+            
+            if (templateChart) {
+                templateChart.destroy();
+            }
+            
+            templateChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: trends.labels,
+                    datasets: [
+                        {
+                            label: 'Open Rate (%)',
+                            data: trends.openRates,
+                            borderColor: '#667eea',
+                            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Click Rate (%)',
+                            data: trends.clickRates,
+                            borderColor: '#f093fb',
+                            backgroundColor: 'rgba(240, 147, 251, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        },
+                        {
+                            label: 'Conversion Rate (%)',
+                            data: trends.conversionRates,
+                            borderColor: '#4facfe',
+                            backgroundColor: 'rgba(79, 172, 254, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Template Effectiveness Trends'
+                        },
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+        
+        function attachButtonListeners() {
+            document.querySelectorAll('.btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const action = this.textContent;
+                    alert(`${action} functionality would be implemented here`);
+                });
+            });
+        }
+        
+        function showDemoData() {
+            // Fallback to original demo data if API fails
+            console.log('Using demo data as fallback');
+        }
+        
+        // Load data on page load
+        loadTemplateData();
+        
+        // Refresh data every 30 seconds
+        setInterval(loadTemplateData, 30000);
+
+        // Initial button listeners will be attached after data loads
+        attachButtonListeners();
+    </script>
+</body>
+</html>

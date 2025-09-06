@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Alerts - Engagement Intelligence</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .nav-link {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: #3498db;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        .alerts-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .summary-card {
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+        }
+        .summary-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .summary-value.high { color: #e74c3c; }
+        .summary-value.medium { color: #f39c12; }
+        .summary-value.low { color: #27ae60; }
+        .summary-value.total { color: #3498db; }
+        .alerts-list {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .alerts-header {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .alerts-header h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+        .filter-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .filter-tab.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+        .alert-item {
+            padding: 2rem;
+            border-bottom: 1px solid #ecf0f1;
+            transition: background 0.3s ease;
+        }
+        .alert-item:hover {
+            background: #f8f9fa;
+        }
+        .alert-item:last-child {
+            border-bottom: none;
+        }
+        .alert-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .alert-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+        .alert-time {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+        .alert-severity {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .alert-severity.high {
+            background: #fee;
+            color: #c0392b;
+        }
+        .alert-severity.medium {
+            background: #fff8e1;
+            color: #e65100;
+        }
+        .alert-severity.low {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        .alert-message {
+            color: #5d6d7e;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .alert-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .action-button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s ease;
+        }
+        .action-button:hover {
+            background: #2980b9;
+        }
+        .action-button.resolve {
+            background: #27ae60;
+        }
+        .action-button.resolve:hover {
+            background: #229954;
+        }
+        .suggested-actions {
+            margin-top: 1rem;
+        }
+        .suggested-actions h4 {
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        .suggested-actions ul {
+            list-style: none;
+            padding: 0;
+        }
+        .suggested-actions li {
+            background: #f8f9fa;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.3rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #5d6d7e;
+        }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+        .no-alerts {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+        .no-alerts h3 {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="nav-link">← Back to Dashboard</a>
+    
+    <div class="header">
+        <h1>🚨 System Alerts</h1>
+        <p>Real-time monitoring and alert management</p>
+    </div>
+
+    <div class="container">
+        <div class="alerts-summary" id="alertsSummary">
+            <div class="loading">Loading alert summary...</div>
+        </div>
+
+        <div class="alerts-list">
+            <div class="alerts-header">
+                <div>
+                    <h2>📋 Active Alerts</h2>
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" data-filter="all">All Alerts</div>
+                        <div class="filter-tab" data-filter="high">High Priority</div>
+                        <div class="filter-tab" data-filter="medium">Medium Priority</div>
+                        <div class="filter-tab" data-filter="low">Low Priority</div>
+                    </div>
+                </div>
+            </div>
+            <div id="alertsList">
+                <div class="loading">Loading alerts...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allAlerts = [];
+
+        async function loadAlertsData() {
+            try {
+                const response = await fetch('/api/dashboard/alerts');
+                const data = await response.json();
+                allAlerts = data.alerts;
+
+                // Update summary cards
+                const summary = calculateSummary(allAlerts);
+                const alertsSummary = document.getElementById('alertsSummary');
+                alertsSummary.innerHTML = `
+                    <div class="summary-card">
+                        <h3>🔴 High Priority</h3>
+                        <div class="summary-value high">${summary.high}</div>
+                        <p>Critical alerts requiring immediate attention</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🟡 Medium Priority</h3>
+                        <div class="summary-value medium">${summary.medium}</div>
+                        <p>Important alerts to address soon</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>🟢 Low Priority</h3>
+                        <div class="summary-value low">${summary.low}</div>
+                        <p>Minor alerts for awareness</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>📊 Total Alerts</h3>
+                        <div class="summary-value total">${summary.total}</div>
+                        <p>All active system alerts</p>
+                    </div>
+                `;
+
+                // Display alerts
+                displayAlerts(allAlerts);
+
+            } catch (error) {
+                document.getElementById('alertsSummary').innerHTML = `
+                    <div class="summary-card">
+                        <h3>⚠️ Error</h3>
+                        <p>Unable to load alerts data</p>
+                    </div>
+                `;
+            }
+        }
+
+        function calculateSummary(alerts) {
+            return {
+                total: alerts.length,
+                high: alerts.filter(a => a.severity === 'high').length,
+                medium: alerts.filter(a => a.severity === 'medium').length,
+                low: alerts.filter(a => a.severity === 'low').length
+            };
+        }
+
+        function displayAlerts(alerts) {
+            const alertsList = document.getElementById('alertsList');
+            
+            if (alerts.length === 0) {
+                alertsList.innerHTML = `
+                    <div class="no-alerts">
+                        <h3>🎉 No Active Alerts</h3>
+                        <p>All systems are running smoothly!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            alertsList.innerHTML = alerts.map(alert => `
+                <div class="alert-item" data-severity="${alert.severity}">
+                    <div class="alert-header">
+                        <div>
+                            <div class="alert-title">${alert.title}</div>
+                            <div class="alert-time">${formatTimeAgo(alert.timestamp)}</div>
+                        </div>
+                        <span class="alert-severity ${alert.severity}">${alert.severity}</span>
+                    </div>
+                    <div class="alert-message">${alert.message}</div>
+                    <div class="alert-actions">
+                        <button class="action-button resolve" onclick="resolveAlert('${alert.id}')">
+                            Resolve Alert
+                        </button>
+                        <button class="action-button" onclick="viewDetails('${alert.id}')">
+                            View Details
+                        </button>
+                    </div>
+                    ${alert.suggestedActions ? `
+                        <div class="suggested-actions">
+                            <h4>💡 Suggested Actions:</h4>
+                            <ul>
+                                ${alert.suggestedActions.map(action => `<li>${action}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes}m ago`;
+            
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+
+        async function resolveAlert(alertId) {
+            try {
+                const response = await fetch(`/api/dashboard/alerts/${alertId}/resolve`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        resolution: 'manual',
+                        notes: 'Resolved from alerts dashboard'
+                    })
+                });
+
+                if (response.ok) {
+                    // Remove the alert from the display
+                    allAlerts = allAlerts.filter(alert => alert.id !== alertId);
+                    displayAlerts(allAlerts);
+                    
+                    // Update summary
+                    const summary = calculateSummary(allAlerts);
+                    loadAlertsData(); // Refresh the summary cards
+                }
+            } catch (error) {
+                alert('Error resolving alert: ' + error.message);
+            }
+        }
+
+        function viewDetails(alertId) {
+            const alert = allAlerts.find(a => a.id === alertId);
+            if (alert) {
+                alert(`Alert Details:\\n\\nID: ${alert.id}\\nType: ${alert.type}\\nSeverity: ${alert.severity}\\nTimestamp: ${new Date(alert.timestamp).toLocaleString()}\\nMessage: ${alert.message}`);
+            }
+        }
+
+        // Filter functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Update active tab
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Filter alerts
+                    const filter = this.dataset.filter;
+                    const filteredAlerts = filter === 'all' 
+                        ? allAlerts 
+                        : allAlerts.filter(alert => alert.severity === filter);
+                    
+                    displayAlerts(filteredAlerts);
+                });
+            });
+        });
+
+        // Load data when page loads
+        loadAlertsData();
+
+        // Refresh data every 30 seconds
+        setInterval(loadAlertsData, 30000);
+    </script>
+</body>
+</html>
